@@ -2239,6 +2239,15 @@
     "node-domexception" "^1.0.0"
     "web-streams-polyfill" "^3.0.3"
 
+"file-type@^18.2.1":
+  "integrity" "sha512-Yw5MtnMv7vgD2/6Bjmmuegc8bQEVA9GmAyaR18bMYWKqsWDG9wgYZ1j4I6gNMF5Y5JBDcUcjRQqNQx7Y8uotcg=="
+  "resolved" "https://registry.npmjs.org/file-type/-/file-type-18.2.1.tgz"
+  "version" "18.2.1"
+  dependencies:
+    "readable-web-to-node-stream" "^3.0.2"
+    "strtok3" "^7.0.0"
+    "token-types" "^5.0.1"
+
 "file-type@^3.8.0":
   "integrity" "sha512-RLoqTXE8/vPmMuTI88DAzhMYC99I8BWv7zYP4A1puo5HIjEJ5EX48ighy4ZyKMG9EDXxBgW6e++cn7d1xuFghA=="
   "resolved" "https://registry.npmjs.org/file-type/-/file-type-3.9.0.tgz"
@@ -5040,7 +5049,7 @@
   dependencies:
     "escape-string-regexp" "^1.0.2"
 
-"strtok3@^7.0.0-alpha.7":
+"strtok3@^7.0.0", "strtok3@^7.0.0-alpha.7":
   "integrity" "sha512-pQ+V+nYQdC5H3Q7qBZAz/MO6lwGhoC2gOAjuouGf/VO0m7vQRh8QNMl2Uf6SwAtzZ9bOw3UIeBukEGNJl5dtXQ=="
   "resolved" "https://registry.npmjs.org/strtok3/-/strtok3-7.0.0.tgz"
   "version" "7.0.0"
@@ -5260,7 +5269,7 @@
   dependencies:
     "is-number" "^7.0.0"
 
-"token-types@^5.0.0-alpha.2":
+"token-types@^5.0.0-alpha.2", "token-types@^5.0.1":
   "integrity" "sha512-Y2fmSnZjQdDb9W4w4r1tswlMHylzWIeOKpx0aZH9BgGtACHhrk3OkT52AzwcuqTRBZtvvnTjDBh8eynMulu8Vg=="
   "resolved" "https://registry.npmjs.org/token-types/-/token-types-5.0.1.tgz"
   "version" "5.0.1"
