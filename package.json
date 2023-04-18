@@ -25,6 +25,7 @@
     "@astrojs/tailwind": "^3.1.1",
     "@notionhq/client": "^2.2.3",
     "@types/probe-image-size": "^7.2.0",
+    "@types/truncate-utf8-bytes": "^1.0.0",
     "astro": "^2.1.9",
     "astro-icon": "^0.8.0",
     "astro-imagetools": "^0.8.1",
@@ -42,6 +43,7 @@
     "file-type": "^18.2.1",
     "https-proxy-agent": "^5.0.1",
     "hugo-bin": "^0.97.0",
-    "node-fetch": "^3.3.1"
+    "node-fetch": "^3.3.1",
+    "truncate-utf8-bytes": "^1.0.2"
   }
 }
