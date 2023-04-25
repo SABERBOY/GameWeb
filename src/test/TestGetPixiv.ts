@@ -44,7 +44,7 @@ export async function getPixivJson(): Promise<IPixivJson> {
     pixiv: JSON.parse(data).pixiv,
     url: url
   };
-  returnData.pixiv = [returnData.pixiv[0]]
+  //returnData.pixiv = [returnData.pixiv[0]]
   console.log(returnData);
   return returnData;
 }
