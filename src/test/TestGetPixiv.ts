@@ -90,11 +90,10 @@ export async function getPixivImages() {
       const pixivPicId = fileName.split('_')[0]
       const picTipAndAuthor = fileName.replace(pixivPicId + "_", "").split("-by-")
       const picTipLabel = picTipAndAuthor[0]
-      const href = pic;
-      // const fileNameSave: string = index + ""
-      // const urlName = size.url;
-      // size.url = trimFilenameToBytes(urlName)
-      // console.log("size:", size);
+      const lastName = pic.substring(pic.lastIndexOf('/') + 1);
+      const encodeLastName = encodeURIComponent(lastName);
+      const newPicUrl=pic.replace(lastName, encodeLastName);
+      const href = newPicUrl;
       return { label: picTipLabel, href, size: undefined as unknown as probe.ProbeResult };
     }))
   }))
@@ -113,7 +112,7 @@ export async function getPixivImages() {
   for await (const value of images) {
     for await (const value1 of value) {
       console.log("downloading:", value1.href);
-      const size: probe.ProbeResult = await probe(encodeURI(value1.href));
+      const size: probe.ProbeResult = await probe((value1.href));
       value1.size = size
       imagesList.push(value1)
     }
