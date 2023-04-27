@@ -6,7 +6,7 @@ import probe from 'probe-image-size';
 import truncate from 'truncate-utf8-bytes';
 import { extname, basename } from 'path';
 
-export function trimFilenameToBytes(filename:string, maxBytes:number = 255) {
+export function trimFilenameToBytes(filename: string, maxBytes: number = 255) {
   // By extracting the file extension from the filename,
   // it'll trim "verylong.pdf" to "verylo.pdf" and not "verylong.p"
   const ext = extname(filename);
@@ -66,21 +66,20 @@ export async function getPixivPicJson(url: string): Promise<IPixivPicJson> {
     pixiv_pic: JSON.parse(data).pixiv_pic,
     url: url
   };
-  console.log('length:', returnData.pixiv_pic.length);
-  
+  // console.log('length:', returnData.pixiv_pic.length);
+
   /* if (returnData.pixiv_pic.length > 0) {
     const picUrl = returnData.pixiv_pic[0];
     returnData.pixiv_pic = [picUrl]
     return returnData;
   } */
-  console.log("returnData:",returnData);
+  // console.log("returnData:",returnData);
   return returnData;
 }
 
 export async function getPixivImages() {
   const pp = await getPixivJson();
   const url = pp.url;
-  let index: number = 0;
   const images = await Promise.all(pp.pixiv.map(async (value: string) => {
     const pixivPicUrlJson = url.replace("url.json", "") + value.replace("./pixiv/", "")
     const picUrlJson = await getPixivPicJson(pixivPicUrlJson);
@@ -92,24 +91,33 @@ export async function getPixivImages() {
       const picTipAndAuthor = fileName.replace(pixivPicId + "_", "").split("-by-")
       const picTipLabel = picTipAndAuthor[0]
       const href = pic;
-      console.log("href:", href);
-      index++;
       // const fileNameSave: string = index + ""
-      const size: probe.ProbeResult = await probe(encodeURI(href)/* , { output: fileNameSave } */);
-      const urlName = size.url;
-      size.url = trimFilenameToBytes(urlName)
+      // const urlName = size.url;
+      // size.url = trimFilenameToBytes(urlName)
       // console.log("size:", size);
-      return { label: picTipLabel, href, size };
+      return { label: picTipLabel, href, size: undefined as unknown as probe.ProbeResult };
     }))
   }))
 
-  const imagesList: { label: string | undefined; href: string; size: { width: number; height: number; length: number; type: string; mime: string; wUnits: string; hUnits: string; url: string; }; }[] = []
-  images.map((value) => {
-    value.map((value1) => {
+  const imagesList: { label: string | undefined; href: string; size: probe.ProbeResult; }[] = []
+  /* images.map((value) => {
+    value.map(async (value1) => {
       // if (imagesList.length <=0)
+      console.log("href:", value1.href);
+      const size: probe.ProbeResult = await probe(encodeURI(value1.href));
+      value1.size = size
       imagesList.push(value1)
     })
-  })
+  }) */
+
+  for await (const value of images) {
+    for await (const value1 of value) {
+      console.log("downloading:", value1.href);
+      const size: probe.ProbeResult = await probe(encodeURI(value1.href));
+      value1.size = size
+      imagesList.push(value1)
+    }
+  }
   return imagesList;
 
 }
