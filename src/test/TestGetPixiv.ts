@@ -108,11 +108,13 @@ export async function getPixivImages() {
       imagesList.push(value1)
     })
   }) */
-
+  let index = 0;
   for await (const value of images) {
     for await (const value1 of value) {
+      if (index >= 500) break;
       console.log("downloading:", value1.href);
       const size: probe.ProbeResult = await probe((value1.href));
+      index++;
       value1.size = size
       imagesList.push(value1)
     }
