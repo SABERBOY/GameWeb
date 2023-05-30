@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import probe from 'probe-image-size';
 import truncate from 'truncate-utf8-bytes';
 import { extname, basename } from 'path';
+const pixivUrl = "https://github.com/SABERBOY/PixivGenerator/raw/pixiv/pixiv/url.json"
 
 export function trimFilenameToBytes(filename: string, maxBytes: number = 255) {
   // By extracting the file extension from the filename,
@@ -19,21 +20,32 @@ export function trimFilenameToBytes(filename: string, maxBytes: number = 255) {
 
 export interface IPixivJson {
   pixiv: string[];
-  url: string
 }
 export interface IPixivPicJson {
-  pixiv_pic: string[];
-  url: string
+  pixiv_pic: IPixivPic[];
 }
 
+export interface IPixivPic {
+  name: string;
+  path: string;
+  index: number;
+  user: string;
+  ext: IEXT;
+}
+
+export enum IEXT {
+  Jpg = ".jpg",
+  PNG = ".png",
+}
+
+
 export async function getPixivJson(): Promise<IPixivJson> {
-  const url = "https://github.com/SABERBOY/PixivGenerator/raw/pixiv/pixiv/url.json"
   let headersList = {
     "Accept": "*/*",
     "User-Agent": "Thunder Client (https://www.thunderclient.com)"
   };
   // const proxyAgent = HttpsProxyAgent('http://127.0.0.1:10900');
-  let response = await fetch(url, {
+  let response = await fetch(pixivUrl, {
     method: "GET",
     headers: headersList,
     // agent: proxyAgent
@@ -42,7 +54,6 @@ export async function getPixivJson(): Promise<IPixivJson> {
   let data = await response.text();
   const returnData: IPixivJson = {
     pixiv: JSON.parse(data).pixiv,
-    url: url
   };
   //returnData.pixiv = [returnData.pixiv[0]]
   console.log(returnData);
@@ -62,10 +73,7 @@ export async function getPixivPicJson(url: string): Promise<IPixivPicJson> {
   });
 
   let data = await response.text();
-  const returnData: IPixivPicJson = {
-    pixiv_pic: JSON.parse(data).pixiv_pic,
-    url: url
-  };
+  const returnData: IPixivPicJson = (JSON.parse(data) as IPixivPicJson);
   // console.log('length:', returnData.pixiv_pic.length);
 
   /* if (returnData.pixiv_pic.length > 0) {
@@ -79,22 +87,19 @@ export async function getPixivPicJson(url: string): Promise<IPixivPicJson> {
 
 export async function getPixivImages() {
   const pp = await getPixivJson();
-  const url = pp.url;
+  const url = pixivUrl;
   const images = await Promise.all(pp.pixiv.map(async (value: string) => {
     const pixivPicUrlJson = url.replace("url.json", "") + value.replace("./pixiv/", "")
     const picUrlJson = await getPixivPicJson(pixivPicUrlJson);
     const picUrl = picUrlJson.pixiv_pic;
-    return await Promise.all(picUrl.map(async (value1: string) => {
-      const pic = url.replace("url.json", "") + value1.replace("./pixiv/", "")
-      const fileName = pic.substring(pic.lastIndexOf('/') + 1)
-      const pixivPicId = fileName.split('_')[0]
-      const picTipAndAuthor = fileName.replace(pixivPicId + "_", "").split("-by-")
-      const picTipLabel = picTipAndAuthor[0]
-      const lastName = pic.substring(pic.lastIndexOf('/') + 1);
-      const encodeLastName = encodeURIComponent(lastName);
-      const newPicUrl=pic.replace(lastName, encodeLastName);
-      const href = newPicUrl;
-      return { label: picTipLabel, href, size: undefined as unknown as probe.ProbeResult };
+
+    return await Promise.all(picUrl.map(async (picData) => {
+      const pixivPicId = picData.name;
+      const fileName = pixivPicId + picData.ext;
+      const picUrl = pixivPicUrlJson.replace("pixiv_pic.json", "") + fileName;
+      const picTipAndAuthor = picData.user
+      const href = picUrl;
+      return { label: picTipAndAuthor, href, size: undefined as unknown as probe.ProbeResult };
     }))
   }))
 
